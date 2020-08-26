@@ -3,8 +3,10 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net"
 	"net/http"
+	"polley/models"
 
 	"github.com/gorilla/mux"
 )
@@ -44,6 +46,30 @@ func (s *Server) putPollHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	ip, _, _ := net.SplitHostPort(r.RemoteAddr)
-	s.ipsDB.AddIPForPoll(uuid, ip)
+	err = s.captureFilterInfo(poll, w, r)
+	if err != nil {
+		log.Printf("captureFilterInfo error: %v", err)
+		return
+	}
+}
+
+func (s *Server) captureFilterInfo(poll *models.Poll, w http.ResponseWriter, r *http.Request) error {
+	switch poll.Filter {
+	case "ip":
+		ip, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			return err
+		}
+		return s.ipsDB.AddIPForPoll(poll.UUID, ip)
+
+	case "cookie":
+		cookie := &http.Cookie{
+			Name:    poll.UUID,
+			Expires: poll.Expires,
+		}
+		http.SetCookie(w, cookie)
+		log.Printf("added cookie %v", cookie)
+		return nil
+	}
+	return nil
 }
