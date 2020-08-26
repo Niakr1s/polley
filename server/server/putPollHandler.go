@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"net"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -31,6 +32,10 @@ func (s *Server) putPollHandler(w http.ResponseWriter, r *http.Request) {
 		writeError(w, errors.New("poll is expired"), http.StatusBadRequest)
 		return
 	}
+	if !s.isVoteAllowed(uuid, poll.Filter, r) {
+		writeError(w, errors.New("vote isn't allowed"), http.StatusBadRequest)
+		return
+	}
 
 	for _, choiceText := range request.ChoiceTexts {
 		err = s.pollDB.Increment(uuid, choiceText)
@@ -39,4 +44,6 @@ func (s *Server) putPollHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+	s.ipsDB.AddIPForPoll(uuid, ip)
 }

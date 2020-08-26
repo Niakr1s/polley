@@ -13,13 +13,15 @@ import (
 // Server is used to handle poll requests.
 type Server struct {
 	pollDB db.PollDB
+	ipsDB  db.IPsDB
 	router *mux.Router
 }
 
 // New constructs new server.
-func New(pollDB db.PollDB) *Server {
+func New(pollDB db.PollDB, ipsDB db.IPsDB) *Server {
 	server := &Server{
 		pollDB: pollDB,
+		ipsDB:  ipsDB,
 		router: mux.NewRouter(),
 	}
 	server.configureHandlers()

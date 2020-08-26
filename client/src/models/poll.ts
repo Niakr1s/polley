@@ -13,6 +13,7 @@ export interface IPoll {
     name: string,
     expires: Date,
     allowMultiple: number,
+    voteAllowed: boolean,
     choices: Choice[],
 }
 

@@ -79,11 +79,11 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
     render = () => {
         if (!this.state.poll) return null
         let choicesRem = choicesRemained(this.state)
-        const pollExpired = isExpired(this.state.poll.expires)
+        const voteAllowed = !isExpired(this.state.poll.expires) && this.state.poll.voteAllowed
         return (
             <div>
                 <h2>{this.state.poll.name}</h2>
-                {!pollExpired && <div className={"" + (choicesRem < 0 ? styles.red : "")}>Choices remained: {choicesRem}</div>}
+                {voteAllowed && <div className={"" + (choicesRem < 0 ? styles.red : "")}>Choices remained: {choicesRem}</div>}
 
                 <Formik initialValues={{ selected: Array(this.state.poll.choices.length).fill(false) } as IFormValues} onSubmit={this.onFormSubmit}
                     validate={this.formValidate}
@@ -100,7 +100,7 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
                                                     <div key={choice.text} className={styles.inline}>{choice.text}:{choice.votes}</div>
                                                 </td>
                                                 <td>
-                                                    {!pollExpired && <Field type="checkbox" name={`selected.${idx}`}></Field>}
+                                                    {voteAllowed && <Field type="checkbox" name={`selected.${idx}`}></Field>}
                                                 </td>
                                             </tr>
                                         ))}
@@ -108,7 +108,7 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
                                     <div className={styles.error}>
                                         <ErrorMessage name={"selected"}></ErrorMessage>
                                     </div>
-                                    {!pollExpired && <div>
+                                    {voteAllowed && <div>
                                         <input type="submit"></input>
                                     </div>}
                                 </div>
@@ -116,7 +116,7 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
                         )
                     }}
                 </Formik>
-                {pollExpired
+                {voteAllowed
                     ? <div>Poll is expired.</div>
                     : <div>{secondsRemained(this.state.poll.expires)} seconds remained</div>
                 }

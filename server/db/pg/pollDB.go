@@ -102,7 +102,24 @@ func (p *PollDB) Read(uuid string) (*models.Poll, error) {
 // Increment increments a choice for a poll with given uuid.
 func (p *PollDB) Increment(uuid string, choiceText string) error {
 	ctx := context.Background()
-	p.pool.Exec(ctx, fmt.Sprintf(`UPDATE %s	SET votes=votes+1 WHERE poll_id=(SELECT id FROM polls WHERE uuid=$1) AND text=$2`, choicesTableName), uuid, choiceText)
+	_, err := p.pool.Exec(ctx, fmt.Sprintf(`UPDATE %s	SET votes=votes+1 WHERE poll_id=(SELECT id FROM polls WHERE uuid=$1) AND text=$2`, choicesTableName), uuid, choiceText)
+	return err
+}
 
-	return nil
+// AddIPForPoll adds ip for poll.
+func (p *PollDB) AddIPForPoll(uuid string, ip string) error {
+	ctx := context.Background()
+	_, err := p.pool.Exec(ctx, `INSERT INTO ips (poll_id, ip) VALUES ((SELECT id FROM polls WHERE uuid=$1), $2) ON conflict DO nothing;`, uuid, ip)
+	return err
+}
+
+// IsVoteAllowedForIP checks if vote is allowed for IP.
+func (p *PollDB) IsVoteAllowedForIP(uuid string, ip string) bool {
+	ctx := context.Background()
+	rows, err := p.pool.Query(ctx, `SELECT * FROM ips WHERE poll_id=(SELECT id FROM polls WHERE uuid=$1) AND ip=$2`, uuid, ip)
+	if err != nil {
+		return true
+	}
+	defer rows.Close()
+	return !rows.Next()
 }

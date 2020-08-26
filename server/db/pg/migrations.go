@@ -10,6 +10,7 @@ import (
 
 var pollsTableName = "polls"
 var choicesTableName = "choices"
+var ipsTableName = "ips"
 
 var defaultMigrations []string = []string{
 	fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
@@ -26,6 +27,13 @@ var defaultMigrations []string = []string{
 		FOREIGN KEY (poll_id) REFERENCES polls(id) ON DELETE CASCADE ON UPDATE CASCADE,
 		UNIQUE (poll_id, id, text)
 	);`, choicesTableName),
+	fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
+		id SERIAL PRIMARY KEY,
+		poll_id INT NOT NULL,
+		ip VARCHAR(20),
+		FOREIGN KEY (poll_id) REFERENCES polls(id),
+		CONSTRAINT poll_id_ip UNIQUE (poll_id, ip)
+	);`, ipsTableName),
 	fmt.Sprintf(`ALTER TABLE IF exists %s
 		ADD COLUMN if not exists allowMultiple INT NOT NULL DEFAULT 1
 		CHECK (allowMultiple >= 1);`, pollsTableName),

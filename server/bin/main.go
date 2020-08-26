@@ -18,7 +18,7 @@ func main() {
 
 	pollDB := pg.NewPollDB(pool)
 
-	server := server.New(pollDB)
+	server := server.New(pollDB, pollDB)
 
 	log.Fatal(http.ListenAndServe(":5000", server))
 }
