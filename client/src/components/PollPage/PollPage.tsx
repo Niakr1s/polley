@@ -79,7 +79,8 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
     render = () => {
         if (!this.state.poll) return null
         let choicesRem = choicesRemained(this.state)
-        const voteAllowed = !isExpired(this.state.poll.expires) && this.state.poll.voteAllowed
+        const pollExpired = isExpired(this.state.poll.expires)
+        const voteAllowed = !pollExpired && this.state.poll.voteAllowed
         return (
             <div>
                 <h2>{this.state.poll.name}</h2>
@@ -116,7 +117,7 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
                         )
                     }}
                 </Formik>
-                {voteAllowed
+                {pollExpired
                     ? <div>Poll is expired.</div>
                     : <div>{secondsRemained(this.state.poll.expires)} seconds remained</div>
                 }
