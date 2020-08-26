@@ -4,6 +4,7 @@ export interface IPollToSend {
     settings: {
         allowMultiple: number,
         timeoutMinutes: number,
+        filter: string, // "", "ip", "cookie"
     }
 }
 

@@ -15,6 +15,7 @@ type Poll struct {
 
 	Expires       time.Time `json:"expires"`
 	AllowMultiple int       `json:"allowMultiple"`
+	Filter        string    `json:"filter"`
 
 	// Choices - Votes pairs.
 	Choices []Choice `json:"choices"`
@@ -35,9 +36,12 @@ var (
 type PollArgs struct {
 	TimeLimitMinutes int
 	AllowMultiple    int
+	Filter           string
 	Name             string
 	Choices          []string
 }
+
+var pollAllowedFilters = map[string]struct{}{"ip": {}, "cookie": {}}
 
 // normalize sets uninitialized or broken members to appropriate value.
 func (args *PollArgs) normalize() {
@@ -51,6 +55,9 @@ func (args *PollArgs) normalize() {
 	}
 	if args.Choices == nil {
 		args.Choices = []string{}
+	}
+	if _, ok := pollAllowedFilters[args.Filter]; !ok {
+		args.Filter = ""
 	}
 }
 
@@ -68,6 +75,7 @@ func NewPoll(args PollArgs) *Poll {
 	res.AllowMultiple = args.AllowMultiple
 
 	res.Name = args.Name
+	res.Filter = args.Filter
 	return res
 }
 

@@ -16,6 +16,7 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
             settings: {
                 allowMultiple: 1,
                 timeoutMinutes: 10,
+                filter: "",
             },
         }
 
@@ -29,6 +30,7 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
             settings: Yup.object().shape({
                 allowMultiple: Yup.number().min(1),
                 timeoutMinutes: Yup.number().min(1).max(120),
+                filter: Yup.string().oneOf(["", "ip", "cookie"]),
             })
         })
 
@@ -95,6 +97,14 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
                                     <ErrorMessage name="settings.timeoutMinutes" render={message => (
                                         <div className={styles.error}>{message}</div>
                                     )}></ErrorMessage>
+                                </div>
+                                <div>
+                                    <label htmlFor="filter">Filter</label>
+                                    <Field id="filter" name="settings.filter" as="select">
+                                        <option value="">none</option>
+                                        <option value="ip">ip</option>
+                                        <option value="cookie">cookie</option>
+                                    </Field>
                                 </div>
                                 <input type="submit" value="submit"></input>
                             </Form>

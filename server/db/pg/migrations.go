@@ -31,6 +31,10 @@ var defaultMigrations []string = []string{
 		CHECK (allowMultiple >= 1);`, pollsTableName),
 	fmt.Sprintf(`ALTER TABLE IF exists %s
 		ADD COLUMN if not exists "name" VARCHAR(100);`, pollsTableName),
+	fmt.Sprintf(`ALTER TABLE IF exists %s
+		ADD COLUMN if not exists "filter" VARCHAR(10) default '';`, pollsTableName),
+	fmt.Sprintf(`ALTER TABLE IF exists %s
+		ADD CHECK(filter = 'ip' OR filter = 'cookie' OR filter = '')`, pollsTableName),
 }
 
 func applyMigrations(pool *pgxpool.Pool, migrations []string) {

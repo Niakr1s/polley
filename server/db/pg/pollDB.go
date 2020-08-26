@@ -31,8 +31,9 @@ func (p *PollDB) Create(poll *models.Poll) error {
 	}
 	defer tx.Rollback(ctx)
 
-	row := tx.QueryRow(ctx, fmt.Sprintf(`INSERT INTO %s (uuid, created_at, expires_at, allowMultiple, name) VALUES ($1, $2, $3, $4, $5) RETURNING id`, pollsTableName),
-		poll.UUID, time.Now().UTC().Round(time.Second), poll.Expires, poll.AllowMultiple, poll.Name)
+	row := tx.QueryRow(ctx,
+		fmt.Sprintf(`INSERT INTO %s (uuid, created_at, expires_at, allowMultiple, name, filter) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`, pollsTableName),
+		poll.UUID, time.Now().UTC().Round(time.Second), poll.Expires, poll.AllowMultiple, poll.Name, poll.Filter)
 	var pollID int
 	err = row.Scan(&pollID)
 	if err != nil {
@@ -68,8 +69,8 @@ func (p *PollDB) Read(uuid string) (*models.Poll, error) {
 
 	res := models.NewEmptyPoll()
 
-	pollQuery := tx.QueryRow(ctx, fmt.Sprintf(`SELECT uuid, expires_at, allowMultiple, name FROM %s WHERE uuid=$1;`, pollsTableName), uuid)
-	err = pollQuery.Scan(&res.UUID, &res.Expires, &res.AllowMultiple, &res.Name)
+	pollQuery := tx.QueryRow(ctx, fmt.Sprintf(`SELECT uuid, expires_at, allowMultiple, name, filter FROM %s WHERE uuid=$1;`, pollsTableName), uuid)
+	err = pollQuery.Scan(&res.UUID, &res.Expires, &res.AllowMultiple, &res.Name, &res.Filter)
 	if err != nil {
 		log.Printf("pg.PollDB.Read: couldn't read poll with uuid=%v: %v", uuid, err)
 		return nil, err

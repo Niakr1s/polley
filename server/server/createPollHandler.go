@@ -10,8 +10,9 @@ type createPollHandlerRequest struct {
 	Choices  []string `json:"choices" validate:"min=2"`
 	Name     string   `json:"name" validate:"required,max=100"`
 	Settings struct {
-		AllowMultiple  int `json:"allowMultiple" validate:"min=1"`
-		TimeoutMinutes int `json:"timeoutMinutes" validate:"min=1,max=120"`
+		AllowMultiple  int    `json:"allowMultiple" validate:"min=1"`
+		TimeoutMinutes int    `json:"timeoutMinutes" validate:"min=1,max=120"`
+		Filter         string `json:"filter"`
 	} `json:"settings"`
 }
 
@@ -21,6 +22,7 @@ func (r createPollHandlerRequest) toPoll() *models.Poll {
 		Choices:          r.Choices,
 		Name:             r.Name,
 		AllowMultiple:    r.Settings.AllowMultiple,
+		Filter:           r.Settings.Filter,
 	})
 	return poll
 }
