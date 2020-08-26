@@ -14,8 +14,7 @@ func TestPollDB(t *testing.T) {
 
 	pollDB := NewPollDB(pool)
 
-	poll, err := models.NewPoll(30, []string{"a", "b", "c"})
-	assert.NoError(t, err)
+	poll := models.NewPoll(models.PollArgs{TimeLimitMinutes: 30, Choices: []string{"a", "b", "c"}})
 
 	err = pollDB.Create(poll)
 	assert.NoError(t, err)

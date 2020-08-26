@@ -8,11 +8,8 @@ import (
 )
 
 func TestNewPoll(t *testing.T) {
-	poll, err := NewPoll(10, []string{"1", "2", "3"})
+	poll := NewPoll(PollArgs{TimeLimitMinutes: 10, Choices: []string{"1", "2", "3"}})
 
-	if err != nil {
-		t.Errorf("NewPoll(): got err: %v", err)
-	}
 	if poll.UUID == "" {
 		t.Errorf("uuid is empty")
 	}
@@ -36,9 +33,11 @@ func TestPoll_IsExpired(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			p, err := NewPoll(tt.durationMinutes, []string{})
+			p := NewPoll(PollArgs{
+				TimeLimitMinutes: tt.durationMinutes,
+				Choices:          []string{},
+			})
 			<-time.After(time.Millisecond * 600) // to bypass rounding
-			assert.NoError(t, err)
 			assert.Equal(t, tt.want, p.IsExpired())
 		})
 	}
@@ -57,8 +56,7 @@ func TestPoll_WillBeExpiredAt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p, err := NewPoll(tt.durationMinutes, []string{})
-			assert.NoError(t, err)
+			p := NewPoll(PollArgs{TimeLimitMinutes: tt.durationMinutes, Choices: []string{}})
 			assert.Equal(t, tt.want, p.WillBeExpiredAt(tt.at))
 		})
 	}

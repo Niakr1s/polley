@@ -31,35 +31,44 @@ var (
 	ErrWrongTimeLimit = errors.New("Wrong timeLimit argument")
 )
 
-// NewPoll create new Poll, assigning each choice with zero votes, generating new UUID and setting Expires time.
-func NewPoll(timeLimitMinutes int, choices []string) (*Poll, error) {
-	if timeLimitMinutes < 0 {
-		return nil, ErrWrongTimeLimit
-	}
-	res := NewEmptyPoll()
-	res.Expires = time.Now().Add(time.Minute * time.Duration(timeLimitMinutes)).UTC().Round(time.Second)
+// PollArgs is constructor arguments.
+type PollArgs struct {
+	TimeLimitMinutes int
+	AllowMultiple    int
+	Name             string
+	Choices          []string
+}
 
-	for _, text := range choices {
+// normalize sets uninitialized or broken members to appropriate value.
+func (args *PollArgs) normalize() {
+	if args.TimeLimitMinutes < 0 {
+		args.TimeLimitMinutes = 0
+	}
+	if args.AllowMultiple < 1 {
+		args.AllowMultiple = 1
+	} else if args.AllowMultiple > len(args.Choices) {
+		args.AllowMultiple = len(args.Choices)
+	}
+	if args.Choices == nil {
+		args.Choices = []string{}
+	}
+}
+
+// NewPoll create new Poll, assigning each choice with zero votes, generating new UUID and setting Expires time.
+func NewPoll(args PollArgs) *Poll {
+	args.normalize()
+
+	res := NewEmptyPoll()
+	res.Expires = time.Now().Add(time.Minute * time.Duration(args.TimeLimitMinutes)).UTC().Round(time.Second)
+
+	for _, text := range args.Choices {
 		res.Choices = append(res.Choices, NewChoice(text))
 	}
-	return res, nil
-}
 
-// WithAllowMultiple sets allowMultiple, bounding it to [1..len(p.Choices)]
-func (p *Poll) WithAllowMultiple(allowMultiple int) *Poll {
-	if allowMultiple < 1 {
-		allowMultiple = 1
-	} else if allowMultiple > len(p.Choices) {
-		allowMultiple = len(p.Choices)
-	}
-	p.AllowMultiple = allowMultiple
-	return p
-}
+	res.AllowMultiple = args.AllowMultiple
 
-// WithName sets name.
-func (p *Poll) WithName(name string) *Poll {
-	p.Name = name
-	return p
+	res.Name = args.Name
+	return res
 }
 
 // NewEmptyPoll creates new Poll, with default values.

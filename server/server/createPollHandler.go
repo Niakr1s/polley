@@ -15,13 +15,14 @@ type createPollHandlerRequest struct {
 	} `json:"settings"`
 }
 
-func (r createPollHandlerRequest) toPoll() (*models.Poll, error) {
-	poll, err := models.NewPoll(r.Settings.TimeoutMinutes, r.Choices)
-	if err != nil {
-		return nil, err
-	}
-	poll = poll.WithAllowMultiple(r.Settings.AllowMultiple).WithName(r.Name)
-	return poll, nil
+func (r createPollHandlerRequest) toPoll() *models.Poll {
+	poll := models.NewPoll(models.PollArgs{
+		TimeLimitMinutes: r.Settings.TimeoutMinutes,
+		Choices:          r.Choices,
+		Name:             r.Name,
+		AllowMultiple:    r.Settings.AllowMultiple,
+	})
+	return poll
 }
 
 type createPollHandlerResponse struct {
@@ -43,11 +44,7 @@ func (s *Server) createPollHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	poll, err := request.toPoll()
-	if err != nil {
-		writeError(w, err, http.StatusBadRequest)
-		return
-	}
+	poll := request.toPoll()
 
 	err = s.pollDB.Create(poll)
 	if err != nil {
