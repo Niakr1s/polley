@@ -40,12 +40,23 @@ var defaultMigrations []string = []string{
 func applyMigrations(pool *pgxpool.Pool, migrations []string) {
 	ctx := context.Background()
 
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		panic(err)
+	}
+	defer tx.Rollback(ctx)
+
 	for i, m := range migrations {
-		_, err := pool.Exec(ctx, m)
+		_, err := tx.Exec(ctx, m)
 		if err != nil {
 			log.Printf("pg.applyMigrations: exec#%v err: %v\n", i, err)
 		} else {
 			log.Printf("pg.applyMigrations: exec#%v success\n", i)
 		}
+	}
+
+	err = tx.Commit(ctx)
+	if err != nil {
+		panic(err)
 	}
 }
