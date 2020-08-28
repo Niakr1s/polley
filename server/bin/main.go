@@ -16,9 +16,9 @@ func main() {
 	}
 	pg.ApplyDefaultMigrations(pool)
 
-	pollDB := pg.NewPollDB(pool)
+	pgDB := pg.NewDB(pool)
 
-	server := server.New(pollDB, pollDB)
+	server := server.New(pgDB, pgDB)
 
 	log.Fatal(http.ListenAndServe(":5000", server))
 }
