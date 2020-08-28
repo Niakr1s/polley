@@ -1,15 +1,15 @@
 import React from 'react'
-import { ApiGetPolls } from '../../api/api'
+import { ApiGetUUIDs } from '../../api/api'
 import { RouteComponentProps } from 'react-router'
-import { IPoll } from '../../models/poll'
-import Poll from '../Poll/Poll'
+import PollWithApi from '../Poll/PollWithApi'
 
 interface MatchParams {
     uuid: string,
 }
 
 interface IState {
-    polls: IPoll[] | null,
+    uuids: string[],
+    total: number,
 }
 
 const pageSize = 10
@@ -18,13 +18,19 @@ class PollsPage extends React.Component<RouteComponentProps<MatchParams>, IState
     constructor(props: Readonly<RouteComponentProps<MatchParams, import("react-router").StaticContext, import("history").History.UnknownFacade>>) {
         super(props)
         this.state = {
-            polls: null,
+            uuids: [],
+            total: 0,
         }
     }
 
     getPolls = (page: number = 0) => {
-        ApiGetPolls(pageSize, page).then(r => {
-            this.setState({ polls: r.data })
+        ApiGetUUIDs(pageSize, page).then(r => {
+            console.log(`PollsPage:got`, r)
+            let {uuids, total} = r.data
+            this.setState(prevState => ({
+                uuids: [...prevState.uuids, ...uuids],
+                total,
+            }))
         }).catch(err => alert(err))
     }
 
@@ -33,10 +39,10 @@ class PollsPage extends React.Component<RouteComponentProps<MatchParams>, IState
     }
 
     render = () => {
-        if (!this.state.polls) return <div>No polls</div>
+        if (!this.state.uuids) return <div>No polls</div>
         return (
             <div>
-                {this.state.polls.map(poll => <Poll key={poll.uuid} poll={poll} withVote={false} submitSelected={() => { }}></Poll>)}
+                {this.state.uuids.map(uuid => <PollWithApi key={uuid} uuid={uuid}></PollWithApi>)}
             </div>
         )
     }

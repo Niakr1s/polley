@@ -13,6 +13,13 @@ interface IState {
 }
 
 class PollWithApi extends React.Component<IProps, IState> {
+    constructor(props: Readonly<IProps>) {
+        super(props)
+        this.state = {
+            poll: null,
+        }
+    }
+
     submitSelected = (selected: boolean[]) => {
         if (!this.state.poll) return
         let choices: string[] = []

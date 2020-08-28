@@ -150,3 +150,11 @@ func (p *DB) GetNPollsUUIDs(pageSize int, page int) ([]string, error) {
 	}
 	return res, nil
 }
+
+// GetTotal gets total entries from db.
+func (p *DB) GetTotal() int {
+	row := p.pool.QueryRow(context.Background(), `SELECT COUNT(*) FROM polls`)
+	total := 0
+	row.Scan(&total)
+	return total
+}

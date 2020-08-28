@@ -44,5 +44,5 @@ func (s *Server) configureHandlers() {
 	s.router.HandleFunc("/createPoll", s.createPollHandler).Methods("POST", "OPTIONS")
 	s.router.HandleFunc("/poll/{uuid}", s.getPollHandler).Methods("GET", "OPTIONS")
 	s.router.HandleFunc("/poll/{uuid}", s.putPollHandler).Methods("PUT", "OPTIONS")
-	s.router.HandleFunc("/getNPolls", s.getNPollsHandler).Methods("GET", "OPTIONS")
+	s.router.HandleFunc("/getUUIDs", s.getUUIDsHandler).Methods("GET", "OPTIONS")
 }
