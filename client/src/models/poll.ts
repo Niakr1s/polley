@@ -1,3 +1,4 @@
+// send to server
 export interface IPollToSend {
     choices: string[],
     name: string,
@@ -8,6 +9,7 @@ export interface IPollToSend {
     }
 }
 
+// got from server
 export interface IPoll {
     uuid: string,
     name: string,
