@@ -1,0 +1,12 @@
+.inline {
+    display: inline-block;
+}
+
+.red {
+    color: red;
+}
+
+.error {
+    color: red;
+    font-size: 12px;
+}
