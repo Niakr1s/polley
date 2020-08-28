@@ -55,7 +55,6 @@ class Poll extends React.Component<IProps, IState> {
     startSeconds = (secondsRemained: number) => {
         this.setState({ secondsRemained })
         this.secondsTimer = setInterval(() => {
-            console.log("decrementing remained")
             if (secondsRemained < 0) {
                 this.stopSeconds()
                 this.setState({ secondsRemained: undefined })
@@ -81,7 +80,6 @@ class Poll extends React.Component<IProps, IState> {
     render = () => {
         let choicesRem = choicesRemained(this.props.poll, this.state.selected)
         const pollExpired = isExpired(this.props.poll.expires)
-        console.log(`pollExpired: `, pollExpired)
         const voteAllowed = !pollExpired && this.props.poll.voteAllowed && this.props.withVote
         return (
             <div className="block">
