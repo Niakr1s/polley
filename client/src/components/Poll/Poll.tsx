@@ -51,7 +51,7 @@ class Poll extends React.Component<IProps, IState> {
         const pollExpired = isExpired(this.props.poll.expires)
         const voteAllowed = !pollExpired && this.props.poll.voteAllowed && this.props.withVote
         return (
-            <div className={styles.pollMain}>
+            <div className="block">
                 <h2>{this.props.poll.name}</h2>
 
                 <Formik initialValues={{ selected: Array(this.props.poll.choices.length).fill(false) } as IFormValues} onSubmit={this.onFormSubmit}

@@ -1,3 +1,12 @@
 body {
     background-color: #F5F5DC;
 }
+
+.block {
+    margin: auto;
+    width: 90%;
+    background-color: #8de2a9;
+    border-radius: 5px;
+    text-align: center;
+    padding: 20px;
+}
