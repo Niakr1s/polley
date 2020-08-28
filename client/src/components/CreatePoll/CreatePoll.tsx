@@ -35,7 +35,7 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
         })
 
         return (
-            <div>
+            <div className="block">
                 <h2>Create Poll</h2>
                 <Formik initialValues={initialValues} onSubmit={values => {
                     console.log(`posting`, values)
@@ -82,31 +82,33 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
                                         </div>
                                     )
                                 }</FieldArray>
-                                <h4>Options</h4>
-                                <div>
-                                    <label htmlFor="allowMultiple">Multiple choices</label>
-                                    <Field id="allowMultiple" as="select" name="settings.allowMultiple">
-                                        {Array.from(Array(values.choices.length).keys(), (_, i) => i + 1).map(i => (
-                                            <option value={i}>{i}</option>
-                                        ))}
-                                    </Field>
+                                <div className={styles.options}>
+                                    <h4>Options</h4>
+                                    <div>
+                                        <label htmlFor="allowMultiple">Multiple choices</label>
+                                        <Field id="allowMultiple" as="select" name="settings.allowMultiple">
+                                            {Array.from(Array(values.choices.length).keys(), (_, i) => i + 1).map(i => (
+                                                <option value={i}>{i}</option>
+                                            ))}
+                                        </Field>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="timeout">Timeout in minutes</label>
+                                        <Field id="timeout" name="settings.timeoutMinutes" type="number" min="1" max="120"></Field>
+                                        <ErrorMessage name="settings.timeoutMinutes" render={message => (
+                                            <div className={styles.error}>{message}</div>
+                                        )}></ErrorMessage>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="filter">Filter</label>
+                                        <Field id="filter" name="settings.filter" as="select">
+                                            <option value="">none</option>
+                                            <option value="ip">ip</option>
+                                            <option value="cookie">cookie</option>
+                                        </Field>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label htmlFor="timeout">Timeout in minutes</label>
-                                    <Field id="timeout" name="settings.timeoutMinutes" type="number" min="1" max="120"></Field>
-                                    <ErrorMessage name="settings.timeoutMinutes" render={message => (
-                                        <div className={styles.error}>{message}</div>
-                                    )}></ErrorMessage>
-                                </div>
-                                <div>
-                                    <label htmlFor="filter">Filter</label>
-                                    <Field id="filter" name="settings.filter" as="select">
-                                        <option value="">none</option>
-                                        <option value="ip">ip</option>
-                                        <option value="cookie">cookie</option>
-                                    </Field>
-                                </div>
-                                <input type="submit" value="submit"></input>
+                                <input type="submit"></input>
                             </Form>
                         )
                     }
