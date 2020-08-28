@@ -30,6 +30,8 @@ export const choicesRemained = (poll: IPoll, selected?: number): number => {
 
 export const getPercentOfNthChoice = (poll: IPoll, idx: number): number => {
     const sum: number = poll.choices.reduce((acc, choice) => acc + choice.votes, 0)
-    const res: number = Math.round(poll.choices[idx].votes / sum * 100)
+    if (sum === 0) return 1
+    const res: number = Math.round((poll.choices[idx].votes / sum * 100) * 99 / 100) + 1
+    console.log(poll, idx, res)
     return res
 }
