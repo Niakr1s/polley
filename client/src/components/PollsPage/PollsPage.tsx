@@ -2,6 +2,7 @@ import React from 'react'
 import { ApiGetUUIDs } from '../../api/api'
 import { RouteComponentProps } from 'react-router'
 import PollWithApi from '../Poll/PollWithApi'
+import InfiniteScroll from 'react-infinite-scroller'
 
 interface MatchParams {
     uuid: string,
@@ -19,14 +20,15 @@ class PollsPage extends React.Component<RouteComponentProps<MatchParams>, IState
         super(props)
         this.state = {
             uuids: [],
-            total: 0,
+            total: Number.MAX_VALUE,
         }
     }
 
-    getPolls = (page: number = 0) => {
+    getPolls = (page: number) => {
+        console.log(`PollsPage:start loading`)
         ApiGetUUIDs(pageSize, page).then(r => {
             console.log(`PollsPage:got`, r)
-            let {uuids, total} = r.data
+            let { uuids, total }: { uuids: string[], total: number } = r.data
             this.setState(prevState => ({
                 uuids: [...prevState.uuids, ...uuids],
                 total,
@@ -39,11 +41,16 @@ class PollsPage extends React.Component<RouteComponentProps<MatchParams>, IState
     }
 
     render = () => {
-        if (!this.state.uuids) return <div>No polls</div>
         return (
-            <div>
+            <InfiniteScroll
+                pageStart={0}
+                loadMore={this.getPolls}
+                hasMore={this.state.uuids.length < this.state.total}
+                loader={<div>Loading...</div>}
+                initialLoad={false}
+            >
                 {this.state.uuids.map(uuid => <PollWithApi key={uuid} uuid={uuid}></PollWithApi>)}
-            </div>
+            </InfiniteScroll>
         )
     }
 }
