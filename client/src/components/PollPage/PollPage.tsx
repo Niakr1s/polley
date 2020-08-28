@@ -3,6 +3,7 @@ import { ApiGetPoll, ApiPutPollChoices } from '../../api/api'
 import { RouteComponentProps } from 'react-router'
 import { IPoll } from '../../models/poll'
 import Poll from '../Poll/Poll'
+import { isExpired } from '../../util/date'
 
 interface MatchParams {
     uuid: string,
@@ -33,14 +34,12 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
 
     getPoll = (once: boolean = false) => {
         ApiGetPoll(this.props.match.params.uuid).then(r => {
-            let expires = new Date(r.data.expires)
             let poll: IPoll = r.data
-            poll.expires = expires
             this.setState({ poll })
 
             if (once) return
 
-            if (!isExpired(expires)) {
+            if (!isExpired(poll.expires)) {
                 setTimeout(() => {
                     this.getPoll()
                 }, 1000)
@@ -63,10 +62,6 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
             </div>
         )
     }
-}
-
-const isExpired = (date: Date): boolean => {
-    return date.valueOf() < Date.now()
 }
 
 export default PollPage

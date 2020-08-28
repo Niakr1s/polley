@@ -2,6 +2,7 @@ package pg
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"polley/models"
@@ -122,4 +123,30 @@ func (p *DB) IsVoteAllowedForIP(uuid string, ip string) bool {
 	}
 	defer rows.Close()
 	return !rows.Next()
+}
+
+// ErrInvalidArguments is thrown from function if invalid arguments are passed.
+var ErrInvalidArguments = errors.New("invalid arguments")
+
+// GetNPollsUUIDs gets n polls with limit and offset.
+func (p *DB) GetNPollsUUIDs(pageSize int, page int) ([]string, error) {
+	if page < 0 || pageSize < 0 {
+		return nil, ErrInvalidArguments
+	}
+	offset := page * pageSize
+	rows, err := p.pool.Query(context.Background(), `SELECT uuid FROM polls ORDER BY id DESC LIMIT $1 OFFSET $2`, pageSize, offset)
+	if err != nil {
+		return nil, err
+	}
+	res := []string{}
+	for rows.Next() {
+		var uuid string
+		err := rows.Scan(&uuid)
+		if err != nil {
+			log.Printf("GetNPollsUUIDs: error while scan: %v", err)
+			return nil, err
+		}
+		res = append(res, uuid)
+	}
+	return res, nil
 }

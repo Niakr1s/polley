@@ -34,7 +34,7 @@ func (s *Server) putPollHandler(w http.ResponseWriter, r *http.Request) {
 		writeError(w, errors.New("poll is expired"), http.StatusBadRequest)
 		return
 	}
-	if !s.isVoteAllowed(uuid, poll.Filter, r) {
+	if !isVoteAllowed(uuid, poll.Filter, r, s.ipsDB) {
 		writeError(w, errors.New("vote isn't allowed"), http.StatusBadRequest)
 		return
 	}

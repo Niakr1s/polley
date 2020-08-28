@@ -3,7 +3,7 @@ body {
 }
 
 .block {
-    margin: auto;
+    margin: 20px auto 20px auto;
     width: 90%;
     background-color: #8de2a9;
     border-radius: 5px;
