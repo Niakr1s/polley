@@ -8,6 +8,7 @@ import { count } from '../../util/arr'
 
 interface IState {
     selected: number,
+    secondsRemained?: number,
 }
 
 interface IProps {
@@ -47,6 +48,34 @@ class Poll extends React.Component<IProps, IState> {
 
     onFormSubmit = ({ selected }: IFormValues) => {
         this.props.submitSelected(selected)
+    }
+
+    secondsTimer?: ReturnType<typeof setInterval>
+
+    startSeconds = (secondsRemained: number) => {
+        this.setState({ secondsRemained })
+        this.secondsTimer = setInterval(() => {
+            console.log("decrementing remained")
+            if (secondsRemained < 0) {
+                this.stopSeconds()
+                this.setState({ secondsRemained: undefined })
+            } else {
+                this.setState({ secondsRemained: --secondsRemained })
+            }
+        }, 1000)
+    }
+
+    stopSeconds = () => {
+        this.secondsTimer && clearInterval(this.secondsTimer)
+    }
+
+    componentDidMount = () => {
+        if (isExpired(this.props.poll.expires)) return
+        this.startSeconds(secondsRemained(this.props.poll.expires))
+    }
+
+    componentWillUnmount = () => {
+        this.stopSeconds()
     }
 
     render = () => {
@@ -97,9 +126,9 @@ class Poll extends React.Component<IProps, IState> {
                         )
                     }}
                 </Formik>
-                {pollExpired
-                    ? <div className={styles.last}>Poll is expired.</div>
-                    : <div className={styles.last}>{secondsRemained(this.props.poll.expires)} seconds remained</div>
+                {this.state.secondsRemained
+                    ? <div className={styles.last}>{secondsRemained(this.props.poll.expires)} seconds remained</div>
+                    : <div className={styles.last}>Poll is expired.</div>
                 }
             </div>
         )
