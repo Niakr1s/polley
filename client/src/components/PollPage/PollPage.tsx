@@ -22,6 +22,11 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
         }
     }
 
+    timeout?: ReturnType<typeof setTimeout> = undefined
+    clearTimeout = () => {
+        this.timeout && clearTimeout(this.timeout)
+    }
+
     submitSelected = (selected: boolean[]) => {
         if (!this.state.poll) return
         let choices: string[] = []
@@ -40,7 +45,8 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
             if (once) return
 
             if (!isExpired(poll.expires)) {
-                setTimeout(() => {
+                this.clearTimeout()
+                this.timeout = setTimeout(() => {
                     this.getPoll()
                 }, 1000)
             }
@@ -49,6 +55,10 @@ class PollPage extends React.Component<RouteComponentProps<MatchParams>, IState>
 
     componentDidMount = () => {
         this.getPoll()
+    }
+
+    componentWillUnmount = () => {
+        this.clearTimeout()
     }
 
     render = () => {
