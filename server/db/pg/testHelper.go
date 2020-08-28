@@ -10,7 +10,7 @@ var testPostgresURL = "postgres://postgres:postgrespass@localhost:5433/polley_te
 
 func makeTestMigrations() []string {
 	res := []string{
-		fmt.Sprintf("DROP TABLE IF EXISTS %s, %s", choicesTableName, pollsTableName),
+		fmt.Sprintf("DROP TABLE IF EXISTS ips, %s, %s", choicesTableName, pollsTableName),
 	}
 	res = append(res, defaultMigrations...)
 	return res
