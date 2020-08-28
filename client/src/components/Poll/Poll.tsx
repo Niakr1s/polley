@@ -103,11 +103,11 @@ class Poll extends React.Component<IProps, IState> {
                                                 <td>
                                                     <div className={styles.inline}>{choice.text}</div>
                                                 </td>
+                                                <td>{choice.votes}</td>
                                                 <td className={styles.progressBarContainer}>
                                                     <div className={styles.progressBar}
                                                         style={{ width: `${getPercentOfNthChoice(this.props.poll, idx)}%` }}
-                                                    >{choice.votes}</div>
-
+                                                    ></div>
                                                 </td>
                                                 <td>
                                                     {voteAllowed && <Field type="checkbox" name={`selected.${idx}`}></Field>}
