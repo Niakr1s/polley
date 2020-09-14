@@ -6,3 +6,15 @@
 .options {
     margin-bottom: 20px;
 }
+
+table {
+    margin: auto;
+}
+
+.w100 {
+    width: 100%;
+}
+
+.options {
+    margin-top: 20px;
+}

@@ -7,8 +7,6 @@ import { ApiCreatePoll } from '../../api/api'
 import { RouteComponentProps } from 'react-router'
 import ToMainPage from '../Links/ToMainPage'
 
-
-
 class CreatePoll extends React.Component<RouteComponentProps, any> {
     render = () => {
         let initialValues: IPollToSend = {
@@ -37,7 +35,7 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
 
         return (
             <div>
-                <ToMainPage/>
+                <ToMainPage />
                 <div className="block">
                     <h2>Create Poll</h2>
                     <Formik initialValues={initialValues} onSubmit={values => {
@@ -86,30 +84,47 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
                                         )
                                     }</FieldArray>
                                     <div className={styles.options}>
-                                        <h4>Options</h4>
-                                        <div>
-                                            <label htmlFor="allowMultiple">Multiple choices</label>
-                                            <Field id="allowMultiple" as="select" name="settings.allowMultiple">
-                                                {Array.from(Array(values.choices.length).keys(), (_, i) => i + 1).map(i => (
-                                                    <option value={i}>{i}</option>
-                                                ))}
-                                            </Field>
-                                        </div>
-                                        <div>
-                                            <label htmlFor="timeout">Timeout in minutes</label>
-                                            <Field id="timeout" name="settings.timeoutMinutes" type="number" min="1" max="120"></Field>
-                                            <ErrorMessage name="settings.timeoutMinutes" render={message => (
-                                                <div className={styles.error}>{message}</div>
-                                            )}></ErrorMessage>
-                                        </div>
-                                        <div>
-                                            <label htmlFor="filter">Filter</label>
-                                            <Field id="filter" name="settings.filter" as="select">
-                                                <option value="">none</option>
-                                                <option value="ip">ip</option>
-                                                <option value="cookie">cookie</option>
-                                            </Field>
-                                        </div>
+                                        <h4 className={styles.options}>Options</h4>
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <label htmlFor="allowMultiple">Multiple choices</label>
+                                                    </td>
+                                                    <td>
+                                                        <Field className={styles.w100} id="allowMultiple" as="select" name="settings.allowMultiple">
+                                                            {Array.from(Array(values.choices.length).keys(), (_, i) => i + 1).map(i => (
+                                                                <option value={i}>{i}</option>
+                                                            ))}
+                                                        </Field>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+
+                                                        <label htmlFor="timeout">Timeout in minutes</label>
+                                                    </td>
+                                                    <td>
+                                                        <Field className={styles.w100} id="timeout" name="settings.timeoutMinutes" type="number" min="1" max="120"></Field>
+                                                    </td>
+                                                    <ErrorMessage name="settings.timeoutMinutes" render={message => (
+                                                        <div className={styles.error}>{message}</div>
+                                                    )}></ErrorMessage>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <label htmlFor="filter">Filter</label>
+                                                    </td>
+                                                    <td>
+                                                        <Field className={styles.w100} id="filter" name="settings.filter" as="select">
+                                                            <option value="">none</option>
+                                                            <option value="ip">ip</option>
+                                                            <option value="cookie">cookie</option>
+                                                        </Field>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                     <input type="submit"></input>
                                 </Form>
