@@ -16,7 +16,7 @@ type getPollResponse struct {
 }
 
 func newGetPollResponse(storage *storage.Storage, r *http.Request, poll *models.Poll) getPollResponse {
-	return getPollResponse{poll, helpers.IsVoteAllowed(poll.UUID, poll.Filter, r, storage.Ips)}
+	return getPollResponse{poll, helpers.IsVoteAllowed(storage, poll, r)}
 }
 
 func getPoll(storage *storage.Storage) http.HandlerFunc {

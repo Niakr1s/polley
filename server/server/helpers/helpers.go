@@ -6,23 +6,24 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"polley/controllers"
+	"polley/models"
+	"polley/server/storage.go"
 	"strconv"
 )
 
 // IsVoteAllowed checks for vote allowed.
 // filter should be one of 'ip' or 'cookie', otherwise it will always return true.
-func IsVoteAllowed(uuid string, filter string, r *http.Request, ipsController controllers.IPsController) bool {
-	switch filter {
+func IsVoteAllowed(storage *storage.Storage, poll *models.Poll, r *http.Request) bool {
+	switch poll.Filter {
 	case "ip":
 		ip, _, err := net.SplitHostPort(r.RemoteAddr)
 		if err != nil {
 			return true
 		}
-		return ipsController.IsVoteAllowedForIP(uuid, ip)
+		return storage.Ips.IsVoteAllowedForIP(poll.UUID, ip)
 
 	case "cookie":
-		_, err := r.Cookie(uuid)
+		_, err := r.Cookie(poll.UUID)
 		if err != nil {
 			return true
 		}

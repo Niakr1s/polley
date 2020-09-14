@@ -37,7 +37,7 @@ func votePoll(storage *storage.Storage) http.HandlerFunc {
 			helpers.WriteError(w, errors.New("poll is expired"), http.StatusBadRequest)
 			return
 		}
-		if !helpers.IsVoteAllowed(uuid, poll.Filter, r, storage.Ips) {
+		if !helpers.IsVoteAllowed(storage, poll, r) {
 			helpers.WriteError(w, errors.New("vote isn't allowed"), http.StatusBadRequest)
 			return
 		}
