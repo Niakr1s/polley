@@ -45,7 +45,6 @@ class PollWithApi extends React.Component<IProps, IState> {
     }
 
     getPoll = (once: boolean = false) => {
-        console.log('getPoll', this.props.uuid)
         ApiGetPoll(this.props.uuid)
             .then(r => {
                 let poll: IPoll = r.data
