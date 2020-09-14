@@ -39,7 +39,6 @@ class Polls extends React.Component<any, IState> {
                 pageStart={0}
                 loadMore={this.getPolls}
                 hasMore={this.state.uuids.length < this.state.total}
-                loader={<div>Loading...</div>}
                 initialLoad={false}
             >
                 {this.state.uuids.map(uuid => <PollWithApi key={uuid} uuid={uuid}></PollWithApi>)}
