@@ -7,7 +7,6 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 )
 
 // Server is used to handle poll requests.
@@ -34,15 +33,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) configureHandlers() {
-	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
-		AllowCredentials: true,
-		AllowedMethods:   []string{"POST", "GET", "PUT"},
-	})
-	s.router.Use(c.Handler)
-
-	s.router.HandleFunc("/createPoll", s.createPollHandler).Methods("POST", "OPTIONS")
-	s.router.HandleFunc("/poll/{uuid}", s.getPollHandler).Methods("GET", "OPTIONS")
-	s.router.HandleFunc("/poll/{uuid}", s.putPollHandler).Methods("PUT", "OPTIONS")
-	s.router.HandleFunc("/getUUIDs", s.getUUIDsHandler).Methods("GET", "OPTIONS")
+	s.router.HandleFunc("/createPoll", s.createPollHandler).Methods("POST")
+	s.router.HandleFunc("/poll/{uuid}", s.getPollHandler).Methods("GET")
+	s.router.HandleFunc("/poll/{uuid}", s.putPollHandler).Methods("PUT")
+	s.router.HandleFunc("/getUUIDs", s.getUUIDsHandler).Methods("GET")
 }
