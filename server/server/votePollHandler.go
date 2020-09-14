@@ -25,7 +25,7 @@ func (s *Server) votePollHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	poll, err := s.pollController.Read(uuid)
+	poll, err := s.storage.Polls.Read(uuid)
 	if err != nil {
 		writeError(w, err, http.StatusBadRequest)
 		return
@@ -34,12 +34,12 @@ func (s *Server) votePollHandler(w http.ResponseWriter, r *http.Request) {
 		writeError(w, errors.New("poll is expired"), http.StatusBadRequest)
 		return
 	}
-	if !isVoteAllowed(uuid, poll.Filter, r, s.ipsController) {
+	if !isVoteAllowed(uuid, poll.Filter, r, s.storage.Ips) {
 		writeError(w, errors.New("vote isn't allowed"), http.StatusBadRequest)
 		return
 	}
 
-	err = s.pollController.Increment(uuid, request.ChoiceTexts)
+	err = s.storage.Polls.Increment(uuid, request.ChoiceTexts)
 	if err != nil {
 		writeError(w, err, http.StatusBadRequest)
 		return
@@ -59,7 +59,7 @@ func (s *Server) storeVotedClient(poll *models.Poll, w http.ResponseWriter, r *h
 		if err != nil {
 			return err
 		}
-		return s.ipsController.AddIPForPoll(poll.UUID, ip)
+		return s.storage.Ips.AddIPForPoll(poll.UUID, ip)
 
 	case "cookie":
 		cookie := &http.Cookie{
