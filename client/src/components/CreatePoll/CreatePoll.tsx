@@ -60,7 +60,7 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
                                             <div>
                                                 {values.choices.map((_choice, idx, choices) => {
                                                     return (
-                                                        <div>
+                                                        <div key={idx}>
                                                             <Field name={`choices.${idx}`}></Field>
                                                             {choices.length > 2 && <button onClick={(event) => {
                                                                 event.preventDefault()
@@ -94,7 +94,7 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
                                                     <td>
                                                         <Field className={styles.w100} id="allowMultiple" as="select" name="settings.allowMultiple">
                                                             {Array.from(Array(values.choices.length).keys(), (_, i) => i + 1).map(i => (
-                                                                <option value={i}>{i}</option>
+                                                                <option value={i} key={i}>{i}</option>
                                                             ))}
                                                         </Field>
                                                     </td>
