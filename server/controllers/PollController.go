@@ -8,7 +8,7 @@ import (
 type PollController interface {
 	Create(poll *models.Poll) error
 	Read(uuid string) (*models.Poll, error)
-	Increment(uuid string, choiceText string) error
+	Increment(uuid string, choiceTexts []string) error
 	GetNPollsUUIDs(pageSize int, page int) ([]string, error)
 	GetTotal() int
 }

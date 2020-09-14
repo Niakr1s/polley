@@ -101,10 +101,28 @@ func (p *PollController) Read(uuid string) (*models.Poll, error) {
 }
 
 // Increment increments a choice for a poll with given uuid.
-func (p *PollController) Increment(uuid string, choiceText string) error {
+func (p *PollController) Increment(uuid string, choiceTexts []string) error {
 	ctx := context.Background()
-	_, err := p.pool.Exec(ctx, fmt.Sprintf(`UPDATE %s	SET votes=votes+1 WHERE poll_id=(SELECT id FROM polls WHERE uuid=$1) AND text=$2`, choicesTableName), uuid, choiceText)
-	return err
+
+	tx, err := p.pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+
+	for _, choiceText := range choiceTexts {
+		_, err := tx.Exec(ctx, fmt.Sprintf(`UPDATE %s SET votes=votes+1 WHERE poll_id=(SELECT id FROM polls WHERE uuid=$1) AND text=$2`, choicesTableName), uuid, choiceText)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = tx.Commit(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // AddIPForPoll adds ip for poll.

@@ -39,13 +39,12 @@ func (s *Server) votePollHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, choiceText := range request.ChoiceTexts {
-		err = s.pollController.Increment(uuid, choiceText)
-		if err != nil {
-			writeError(w, err, http.StatusBadRequest)
-			return
-		}
+	err = s.pollController.Increment(uuid, request.ChoiceTexts)
+	if err != nil {
+		writeError(w, err, http.StatusBadRequest)
+		return
 	}
+
 	err = s.storeVotedClient(poll, w, r)
 	if err != nil {
 		log.Printf("captureFilterInfo error: %v", err)

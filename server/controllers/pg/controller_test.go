@@ -16,7 +16,8 @@ func TestController(t *testing.T) {
 
 	// testing PollController interface
 
-	poll := models.NewPoll(models.PollArgs{TimeLimitMinutes: 30, Choices: []string{"a", "b", "c"}})
+	choicesArr := []string{"a", "b", "c"}
+	poll := models.NewPoll(models.PollArgs{TimeLimitMinutes: 30, Choices: choicesArr})
 
 	err = pgController.Create(poll)
 	assert.NoError(t, err)
@@ -28,12 +29,14 @@ func TestController(t *testing.T) {
 
 	const votes = 3
 	for i := 0; i < votes; i++ {
-		pgController.Increment(poll.UUID, poll.Choices[0].Text)
+		pgController.Increment(poll.UUID, choicesArr)
 	}
 
 	storedPoll, err = pgController.Read(poll.UUID)
 	assert.NoError(t, err)
 	assert.Equal(t, votes, storedPoll.Choices[0].Votes)
+	assert.Equal(t, votes, storedPoll.Choices[1].Votes)
+	assert.Equal(t, votes, storedPoll.Choices[2].Votes)
 
 	// testing IPsController interface
 
