@@ -1,20 +1,11 @@
 package server
 
 import (
+	"encoding/json"
 	"net"
 	"net/http"
 	"polley/db"
-	"polley/models"
 )
-
-type pollResponse struct {
-	*models.Poll
-	VoteAllowed bool `json:"voteAllowed"`
-}
-
-func newPollResponse(s *Server, r *http.Request, poll *models.Poll) pollResponse {
-	return pollResponse{poll, isVoteAllowed(poll.UUID, poll.Filter, r, s.ipsDB)}
-}
 
 func isVoteAllowed(uuid string, filter string, r *http.Request, ipsDB db.IPsDB) bool {
 	switch filter {
@@ -34,4 +25,13 @@ func isVoteAllowed(uuid string, filter string, r *http.Request, ipsDB db.IPsDB) 
 
 	}
 	return true
+}
+
+func writeError(w http.ResponseWriter, err error, code int) {
+	type ResponsePayload struct {
+		Error string `json:"error"`
+	}
+	w.WriteHeader(code)
+	responsePayload := ResponsePayload{err.Error()}
+	json.NewEncoder(w).Encode(responsePayload)
 }

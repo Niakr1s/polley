@@ -11,11 +11,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type putPollHandlerRequest struct {
-	ChoiceTexts []string `json:"choices"`
-}
+func (s *Server) votePollHandler(w http.ResponseWriter, r *http.Request) {
+	type putPollHandlerRequest struct {
+		ChoiceTexts []string `json:"choices"`
+	}
 
-func (s *Server) putPollHandler(w http.ResponseWriter, r *http.Request) {
 	uuid := mux.Vars(r)["uuid"]
 
 	request := &putPollHandlerRequest{}
@@ -46,14 +46,14 @@ func (s *Server) putPollHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	err = s.captureFilterInfo(poll, w, r)
+	err = s.storeVotedClient(poll, w, r)
 	if err != nil {
 		log.Printf("captureFilterInfo error: %v", err)
 		return
 	}
 }
 
-func (s *Server) captureFilterInfo(poll *models.Poll, w http.ResponseWriter, r *http.Request) error {
+func (s *Server) storeVotedClient(poll *models.Poll, w http.ResponseWriter, r *http.Request) error {
 	switch poll.Filter {
 	case "ip":
 		ip, _, err := net.SplitHostPort(r.RemoteAddr)
