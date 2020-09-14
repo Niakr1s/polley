@@ -1,7 +1,7 @@
-package db
+package controllers
 
-// IPsDB stores IPs for each poll.
-type IPsDB interface {
+// IPsController stores IPs for each poll.
+type IPsController interface {
 	AddIPForPoll(uuid string, ip string) error
 	IsVoteAllowedForIP(uuid string, ip string) bool
 }

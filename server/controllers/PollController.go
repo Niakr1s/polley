@@ -1,11 +1,11 @@
-package db
+package controllers
 
 import (
 	"polley/models"
 )
 
-// PollDB is interface for storing PollDB.
-type PollDB interface {
+// PollController is interface for storing PollController.
+type PollController interface {
 	Create(poll *models.Poll) error
 	Read(uuid string) (*models.Poll, error)
 	Increment(uuid string, choiceText string) error

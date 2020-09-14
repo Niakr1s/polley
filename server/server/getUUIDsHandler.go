@@ -44,7 +44,7 @@ func getFirstIntValueFromQuery(query url.Values, key string) (int, error) {
 func (s *Server) getUUIDsHandler(w http.ResponseWriter, r *http.Request) {
 	request := newGetUUIDsRequestFromQuery(r.URL.Query())
 
-	uuids, err := s.pollDB.GetNPollsUUIDs(request.PageSize, request.Page)
+	uuids, err := s.pollController.GetNPollsUUIDs(request.PageSize, request.Page)
 	if err != nil {
 		writeError(w, err, http.StatusInternalServerError)
 		return
@@ -52,7 +52,7 @@ func (s *Server) getUUIDsHandler(w http.ResponseWriter, r *http.Request) {
 
 	response := getUUIDsResponse{
 		UUIDs: uuids,
-		Total: s.pollDB.GetTotal(),
+		Total: s.pollController.GetTotal(),
 	}
 
 	err = json.NewEncoder(w).Encode(response)

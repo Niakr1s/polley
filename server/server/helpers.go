@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 	"net"
 	"net/http"
-	"polley/db"
+	"polley/controllers"
 )
 
-func isVoteAllowed(uuid string, filter string, r *http.Request, ipsDB db.IPsDB) bool {
+func isVoteAllowed(uuid string, filter string, r *http.Request, ipsController controllers.IPsController) bool {
 	switch filter {
 	case "ip":
 		ip, _, err := net.SplitHostPort(r.RemoteAddr)
 		if err != nil {
 			return true
 		}
-		return ipsDB.IsVoteAllowedForIP(uuid, ip)
+		return ipsController.IsVoteAllowedForIP(uuid, ip)
 
 	case "cookie":
 		_, err := r.Cookie(uuid)

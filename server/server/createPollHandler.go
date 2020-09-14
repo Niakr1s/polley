@@ -48,7 +48,7 @@ func (s *Server) createPollHandler(w http.ResponseWriter, r *http.Request) {
 
 	poll := request.toPoll()
 
-	err = s.pollDB.Create(poll)
+	err = s.pollController.Create(poll)
 	if err != nil {
 		writeError(w, err, http.StatusInternalServerError)
 		return

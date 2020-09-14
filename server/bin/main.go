@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-	"polley/db/pg"
+	"polley/controllers/pg"
 	"polley/server"
 )
 
@@ -16,9 +16,9 @@ func main() {
 	}
 	pg.ApplyDefaultMigrations(pool)
 
-	pgDB := pg.NewDB(pool)
+	pgController := pg.NewPollController(pool)
 
-	server := server.New(pgDB, pgDB)
+	server := server.New(pgController, pgController)
 
 	log.Fatal(http.ListenAndServe(":5000", server))
 }

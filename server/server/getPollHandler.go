@@ -14,13 +14,13 @@ type pollResponse struct {
 }
 
 func newPollResponse(s *Server, r *http.Request, poll *models.Poll) pollResponse {
-	return pollResponse{poll, isVoteAllowed(poll.UUID, poll.Filter, r, s.ipsDB)}
+	return pollResponse{poll, isVoteAllowed(poll.UUID, poll.Filter, r, s.ipsController)}
 }
 
 func (s *Server) getPollHandler(w http.ResponseWriter, r *http.Request) {
 	uuid := mux.Vars(r)["uuid"]
 
-	poll, err := s.pollDB.Read(uuid)
+	poll, err := s.pollController.Read(uuid)
 	if err != nil {
 		writeError(w, err, http.StatusBadRequest)
 		return

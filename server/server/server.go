@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 	"os"
-	"polley/db"
+	"polley/controllers"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -11,17 +11,17 @@ import (
 
 // Server is used to handle poll requests.
 type Server struct {
-	pollDB db.PollDB
-	ipsDB  db.IPsDB
-	router *mux.Router
+	pollController controllers.PollController
+	ipsController  controllers.IPsController
+	router         *mux.Router
 }
 
 // New constructs new server.
-func New(pollDB db.PollDB, ipsDB db.IPsDB) *Server {
+func New(pollController controllers.PollController, ipsController controllers.IPsController) *Server {
 	server := &Server{
-		pollDB: pollDB,
-		ipsDB:  ipsDB,
-		router: mux.NewRouter(),
+		pollController: pollController,
+		ipsController:  ipsController,
+		router:         mux.NewRouter(),
 	}
 	server.configureHandlers()
 
