@@ -14,7 +14,7 @@ type createPollRequest struct {
 	Settings struct {
 		AllowMultiple  int    `json:"allowMultiple" validate:"min=1"`
 		TimeoutMinutes int    `json:"timeoutMinutes" validate:"min=1,max=120"`
-		Filter         string `json:"filter"`
+		Filter         string `json:"filter" validate:"oneof=none ip cookie"`
 	} `json:"settings"`
 }
 
