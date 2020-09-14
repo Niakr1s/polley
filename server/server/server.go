@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 	"os"
+	"polley/server/routers/poll"
 	"polley/server/storage.go"
 
 	"github.com/gorilla/handlers"
@@ -31,8 +32,5 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) configureHandlers() {
-	s.router.HandleFunc("/createPoll", s.createPollHandler).Methods("POST")
-	s.router.HandleFunc("/poll/{uuid}", s.getPollHandler).Methods("GET")
-	s.router.HandleFunc("/poll/{uuid}", s.votePollHandler).Methods("PUT")
-	s.router.HandleFunc("/getUUIDs", s.getUUIDsHandler).Methods("GET")
+	poll.RegisterPollRouter(s.router.PathPrefix("/api").Subrouter(), s.storage)
 }
