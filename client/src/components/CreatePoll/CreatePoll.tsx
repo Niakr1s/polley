@@ -15,7 +15,7 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
             settings: {
                 allowMultiple: 1,
                 timeoutMinutes: 10,
-                filter: "",
+                filter: "cookie",
             },
         }
 
@@ -107,9 +107,6 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
                                                     <td>
                                                         <Field className={styles.w100} id="timeout" name="settings.timeoutMinutes" type="number" min="1" max="120"></Field>
                                                     </td>
-                                                    <ErrorMessage name="settings.timeoutMinutes" render={message => (
-                                                        <div className={styles.error}>{message}</div>
-                                                    )}></ErrorMessage>
                                                 </tr>
                                                 <tr>
                                                     <td>
@@ -125,6 +122,9 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
                                                 </tr>
                                             </tbody>
                                         </table>
+                                        <ErrorMessage name="settings.timeoutMinutes" render={message => (
+                                            <div className={styles.error}>{message}</div>
+                                        )}></ErrorMessage>
                                     </div>
                                     <input type="submit"></input>
                                 </Form>
