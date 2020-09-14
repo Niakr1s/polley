@@ -55,11 +55,13 @@ class Poll extends React.Component<IProps, IState> {
     startSeconds = (secondsRemained: number) => {
         this.setState({ secondsRemained })
         this.secondsTimer = setInterval(() => {
-            if (secondsRemained < 0) {
+            if (this.state.secondsRemained == null) {
+                this.stopSeconds();
+            } else if (this.state.secondsRemained <= 0) {
                 this.stopSeconds()
                 this.setState({ secondsRemained: undefined })
             } else {
-                this.setState({ secondsRemained: --secondsRemained })
+                this.setState({ secondsRemained: this.state.secondsRemained - 1 })
             }
         }, 1000)
     }
