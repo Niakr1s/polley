@@ -33,41 +33,41 @@ class PollWithApi extends React.Component<IProps, IState> {
     }
 
     pollTimeout?: ReturnType<typeof setTimeout>
-    startPollTimeout = () => {
-        this.clearPollTimeout()
-        this.pollTimeout = setTimeout(() => {
+    startPollInterval = () => {
+        this.clearPollInterval();
+        this.getPoll();
+        this.pollTimeout = setInterval(() => {
             this.getPoll()
-        }, 5000)
+        }, 5000);
     }
-    clearPollTimeout = () => {
+    clearPollInterval = () => {
         this.pollTimeout && clearTimeout(this.pollTimeout)
     }
 
     getPoll = (once: boolean = false) => {
+        console.log('getPoll', this.props.uuid)
         ApiGetPoll(this.props.uuid)
             .then(r => {
                 let poll: IPoll = r.data
                 this.setState({ poll })
 
-                if (once) return
-
-                if (!isExpired(poll.expires)) {
-                    this.startPollTimeout()
+                if (once || isExpired(poll.expires)) {
+                    this.clearPollInterval();
                 }
             })
             .catch((error) => {
                 console.log('error', error.message)
                 this.setState({ error: error.message })
-                this.clearPollTimeout();
+                this.clearPollInterval();
             })
     }
 
     componentDidMount = () => {
-        this.getPoll()
+        this.startPollInterval()
     }
 
     componentWillUnmount = () => {
-        this.clearPollTimeout()
+        this.clearPollInterval()
     }
 
     render = () => {
