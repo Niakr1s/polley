@@ -58,7 +58,6 @@ class PollWithApi extends React.Component<IProps, IState> {
             .catch((error) => {
                 console.log('error', error.message)
                 this.setState({ error: error.message })
-                this.clearPollInterval();
             })
     }
 
