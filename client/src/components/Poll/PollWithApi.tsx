@@ -3,6 +3,7 @@ import { ApiGetPoll, ApiPutPollChoices } from '../../api/api'
 import { IPoll } from '../../models/poll'
 import Poll from './Poll'
 import { isExpired } from '../../util/date'
+import { Loader } from 'semantic-ui-react'
 
 interface IProps {
     uuid: string,
@@ -10,6 +11,7 @@ interface IProps {
 
 interface IState {
     poll: IPoll | null,
+    error?: string,
 }
 
 class PollWithApi extends React.Component<IProps, IState> {
@@ -42,16 +44,22 @@ class PollWithApi extends React.Component<IProps, IState> {
     }
 
     getPoll = (once: boolean = false) => {
-        ApiGetPoll(this.props.uuid).then(r => {
-            let poll: IPoll = r.data
-            this.setState({ poll })
+        ApiGetPoll(this.props.uuid)
+            .then(r => {
+                let poll: IPoll = r.data
+                this.setState({ poll })
 
-            if (once) return
+                if (once) return
 
-            if (!isExpired(poll.expires)) {
-                this.startPollTimeout()
-            }
-        })
+                if (!isExpired(poll.expires)) {
+                    this.startPollTimeout()
+                }
+            })
+            .catch((error) => {
+                console.log('error', error.message)
+                this.setState({ error: error.message })
+                this.clearPollTimeout();
+            })
     }
 
     componentDidMount = () => {
@@ -63,9 +71,18 @@ class PollWithApi extends React.Component<IProps, IState> {
     }
 
     render = () => {
-        if (!this.state.poll) return null
+        if (this.state.error) {
+            return (
+                <div>Error occured while loading poll: {this.state.error}</div>
+            )
+        }
+        if (!this.state.poll) {
+            return (
+                <Loader />
+            )
+        }
         return (
-            this.state.poll && <Poll poll={this.state.poll} withVote={true} submitSelected={this.submitSelected}></Poll>
+            <Poll poll={this.state.poll} withVote={this.state.poll.voteAllowed} submitSelected={this.submitSelected}></Poll>
         )
     }
 }

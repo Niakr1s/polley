@@ -1,3 +1,4 @@
+import 'semantic-ui-css/semantic.min.css';
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import CreatePoll from './components/CreatePoll/CreatePoll';
