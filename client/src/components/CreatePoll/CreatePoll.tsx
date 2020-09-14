@@ -45,93 +45,92 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
                         ApiCreatePoll(values).then((res) => {
                             this.props.history.push(`/poll/${res.data.uuid}`)
                         }).catch(err => { alert("couldn't create poll: " + err) })
-                    }} render={
-                        ({ values, errors }) => {
-                            return (
-                                <Form>
-                                    <div>Poll name</div>
-                                    <Field name="name"></Field>
-                                    <ErrorMessage name="name" render={message => (
+                    }} validationSchema={validationSchema}
+                    >{({ values, errors }) => {
+                        return (
+                            <Form>
+                                <div>Poll name</div>
+                                <Field name="name"></Field>
+                                <ErrorMessage name="name" render={message => (
+                                    <div className={styles.error}>{message}</div>
+                                )}></ErrorMessage>
+                                <div>Choices</div>
+                                <FieldArray name="choices">{
+                                    ({ remove, push }) => (
+                                        <div>
+                                            {values.choices.map((_choice, idx, choices) => {
+                                                return (
+                                                    <div key={idx}>
+                                                        <Field name={`choices.${idx}`}></Field>
+                                                        {choices.length > 2 && <button onClick={(event) => {
+                                                            event.preventDefault()
+                                                            remove(idx)
+                                                            values.settings.allowMultiple--
+                                                        }}>-</button>}
+                                                        {<ErrorMessage name={`choices`} render={message => (
+                                                            !(typeof message === 'string') && <div className={styles.error}>{message[idx]}</div>
+                                                        )}></ErrorMessage>}
+                                                    </div>
+                                                )
+                                            })}
+                                            <ErrorMessage name={`choices`} render={message => (
+                                                (typeof message === 'string') && <div className={styles.error}>{message}</div>
+                                            )}></ErrorMessage>
+                                            <button onClick={(event) => {
+                                                event.preventDefault()
+                                                push("")
+                                            }}>add row</button>
+                                        </div>
+                                    )
+                                }</FieldArray>
+                                <div className={styles.options}>
+                                    <h4 className={styles.options}>Options</h4>
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <label htmlFor="allowMultiple">Multiple choices</label>
+                                                </td>
+                                                <td>
+                                                    <Field className={styles.w100} id="allowMultiple" as="select" name="settings.allowMultiple">
+                                                        {Array.from(Array(values.choices.length).keys(), (_, i) => i + 1).map(i => (
+                                                            <option value={i} key={i}>{i}</option>
+                                                        ))}
+                                                    </Field>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+
+                                                    <label htmlFor="timeout">Timeout in minutes</label>
+                                                </td>
+                                                <td>
+                                                    <Field className={styles.w100} id="timeout" name="settings.timeoutMinutes" type="number" min="1" max="120"></Field>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label htmlFor="filter">Filter</label>
+                                                </td>
+                                                <td>
+                                                    <Field className={styles.w100} id="filter" name="settings.filter" as="select">
+                                                        <option value="">none</option>
+                                                        <option value="ip">ip</option>
+                                                        <option value="cookie">cookie</option>
+                                                    </Field>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <ErrorMessage name="settings.timeoutMinutes" render={message => (
                                         <div className={styles.error}>{message}</div>
                                     )}></ErrorMessage>
-                                    <div>Choices</div>
-                                    <FieldArray name="choices">{
-                                        ({ remove, push }) => (
-                                            <div>
-                                                {values.choices.map((_choice, idx, choices) => {
-                                                    return (
-                                                        <div key={idx}>
-                                                            <Field name={`choices.${idx}`}></Field>
-                                                            {choices.length > 2 && <button onClick={(event) => {
-                                                                event.preventDefault()
-                                                                remove(idx)
-                                                                values.settings.allowMultiple--
-                                                            }}>-</button>}
-                                                            {<ErrorMessage name={`choices`} render={message => (
-                                                                !(typeof message === 'string') && <div className={styles.error}>{message[idx]}</div>
-                                                            )}></ErrorMessage>}
-                                                        </div>
-                                                    )
-                                                })}
-                                                <ErrorMessage name={`choices`} render={message => (
-                                                    (typeof message === 'string') && <div className={styles.error}>{message}</div>
-                                                )}></ErrorMessage>
-                                                <button onClick={(event) => {
-                                                    event.preventDefault()
-                                                    push("")
-                                                }}>add row</button>
-                                            </div>
-                                        )
-                                    }</FieldArray>
-                                    <div className={styles.options}>
-                                        <h4 className={styles.options}>Options</h4>
-                                        <table>
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <label htmlFor="allowMultiple">Multiple choices</label>
-                                                    </td>
-                                                    <td>
-                                                        <Field className={styles.w100} id="allowMultiple" as="select" name="settings.allowMultiple">
-                                                            {Array.from(Array(values.choices.length).keys(), (_, i) => i + 1).map(i => (
-                                                                <option value={i} key={i}>{i}</option>
-                                                            ))}
-                                                        </Field>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-
-                                                        <label htmlFor="timeout">Timeout in minutes</label>
-                                                    </td>
-                                                    <td>
-                                                        <Field className={styles.w100} id="timeout" name="settings.timeoutMinutes" type="number" min="1" max="120"></Field>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <label htmlFor="filter">Filter</label>
-                                                    </td>
-                                                    <td>
-                                                        <Field className={styles.w100} id="filter" name="settings.filter" as="select">
-                                                            <option value="">none</option>
-                                                            <option value="ip">ip</option>
-                                                            <option value="cookie">cookie</option>
-                                                        </Field>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <ErrorMessage name="settings.timeoutMinutes" render={message => (
-                                            <div className={styles.error}>{message}</div>
-                                        )}></ErrorMessage>
-                                    </div>
-                                    <input type="submit" disabled={Object.keys(errors).length !== 0}></input>
-                                </Form>
-                            )
-                        }
-                    } validationSchema={validationSchema}
-                    ></Formik>
+                                </div>
+                                <input type="submit" disabled={Object.keys(errors).length !== 0}></input>
+                            </Form>
+                        )
+                    }}
+                    </Formik>
                 </div>
             </div>
         )
