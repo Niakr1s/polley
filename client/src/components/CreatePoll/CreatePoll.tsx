@@ -46,7 +46,7 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
                             this.props.history.push(`/poll/${res.data.uuid}`)
                         }).catch(err => { alert("couldn't create poll: " + err) })
                     }} render={
-                        ({ values }) => {
+                        ({ values, errors }) => {
                             return (
                                 <Form>
                                     <div>Poll name</div>
@@ -126,7 +126,7 @@ class CreatePoll extends React.Component<RouteComponentProps, any> {
                                             <div className={styles.error}>{message}</div>
                                         )}></ErrorMessage>
                                     </div>
-                                    <input type="submit"></input>
+                                    <input type="submit" disabled={Object.keys(errors).length !== 0}></input>
                                 </Form>
                             )
                         }
